@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FreshBox</string>
+    <string name="title_add_edit_food">식품 정보</string>
+    <string name="add_food_item">식품 추가</string>
+</resources>
