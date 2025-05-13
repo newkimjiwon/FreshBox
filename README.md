@@ -28,14 +28,14 @@ FreshBox는 냉장고 속 식품을 체계적으로 관리할 수 있는 Android
 
 ## 🗂️ 프로젝트 구조
 
-com.example.freshbox
-├── data/ # Room Entity, DAO, DB 정의
-├── repository/ # Repository (데이터 처리 로직)
-├── ui/
-│ ├── list/ # 메인 식품 리스트 화면 (MainActivity, ViewModel, Adapter)
-│ └── addedit/ # 식품 추가/수정 화면
-├── util/ # 공통 유틸리티 (SingleLiveEvent 등)
-└── MyApplication.kt # 앱 전체 초기화
+com.example.freshbox  <br/>
+├── data/ # Room Entity, DAO, DB 정의 <br/>
+├── repository/ # Repository (데이터 처리 로직) <br/>
+├── ui/  <br/>
+│ ├── list/ # 메인 식품 리스트 화면 (MainActivity, ViewModel, Adapter)  <br/>
+│ └── addedit/ # 식품 추가/수정 화면  <br/>
+├── util/ # 공통 유틸리티 (SingleLiveEvent 등)  <br/>
+└── MyApplication.kt # 앱 전체 초기화  <br/>
 
 
 ## ⚙️ 빌드 및 실행 방법
