@@ -19,12 +19,20 @@
 
         <activity
             android:name=".ui.list.MainActivity"
+            android:exported="true" />
+
+        <activity android:name=".ui.all.AllFoodsActivity" />
+
+        <activity
+            android:name=".ui.splash.SplashActivity"
+            android:theme="@style/Theme.FreshBox"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
 
         <activity
             android:name=".ui.addedit.AddEditFoodActivity"

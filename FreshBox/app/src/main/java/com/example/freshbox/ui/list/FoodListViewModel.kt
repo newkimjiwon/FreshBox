@@ -1,11 +1,7 @@
 package com.example.freshbox.ui.list
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.freshbox.data.AppDatabase
 import com.example.freshbox.data.FoodItem
 import com.example.freshbox.repository.FoodRepository
@@ -14,22 +10,24 @@ import kotlinx.coroutines.launch
 enum class FoodFilterType { ALL, ACTIVE, EXPIRED, EXPIRING_SOON }
 
 class FoodListViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: FoodRepository
+    private val foodDao = AppDatabase.getDatabase(application).foodDao()
+    private val repository = FoodRepository(foodDao)
+
     private val _filterType = MutableLiveData<FoodFilterType>(FoodFilterType.ACTIVE)
 
-    private val allFoodItemsFromRepo: LiveData<List<FoodItem>>
-    private val activeFoodItemsFromRepo: LiveData<List<FoodItem>>
-    private val expiredFoodItemsFromRepo: LiveData<List<FoodItem>>
+    private val allFoodItemsFromRepo: LiveData<List<FoodItem>> = repository.getAllFoodItemsSortedByExpiry()
+    private val activeFoodItemsFromRepo: LiveData<List<FoodItem>> = repository.getActiveFoodItems()
+    private val expiredFoodItemsFromRepo: LiveData<List<FoodItem>> = repository.getExpiredFoodItems()
 
     val filteredFoodItems = MediatorLiveData<List<FoodItem>>()
+    val expiredFoodItems: LiveData<List<FoodItem>> = repository.getExpiredFoodItems()
+    val expiringSoonFoodItems = MediatorLiveData<List<FoodItem>>()
 
     init {
-        val foodDao = AppDatabase.getDatabase(application).foodDao()
-        repository = FoodRepository(foodDao)
-
-        allFoodItemsFromRepo = repository.getAllFoodItemsSortedByExpiry()
-        activeFoodItemsFromRepo = repository.getActiveFoodItems()
-        expiredFoodItemsFromRepo = repository.getExpiredFoodItems()
+        // expiringSoonFoodItems 연결
+        expiringSoonFoodItems.addSource(activeFoodItemsFromRepo) { list ->
+            expiringSoonFoodItems.value = list.filter { it.isExpiringSoon() }
+        }
 
         filteredFoodItems.addSource(_filterType) { filter ->
             updateFilteredData(filter, activeFoodItemsFromRepo.value)
