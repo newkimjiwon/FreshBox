@@ -1,49 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.list.MainActivity">
+    android:background="@android:color/white">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <!-- 상단 로고 + 설정 (ConstraintLayout로 정확한 배치) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="@string/app_name" />
+        <ImageView
+            android:id="@+id/imageViewLogo"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
+        <ImageView
+            android:id="@+id/imageViewSettings"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_settings"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/imageViewLogo"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewLogo" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 검색창 -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="72dp"
+        app:boxBackgroundMode="outline">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabMode="scrollable"> <com.google.android.material.tabs.TabItem
-            android:text="진행중" />
-            <com.google.android.material.tabs.TabItem
-                android:text="소비기한 임박" />
-            <com.google.android.material.tabs.TabItem
-                android:text="소비기한 만료" />
-            <com.google.android.material.tabs.TabItem
-                android:text="전체" />
-        </com.google.android.material.tabs.TabLayout>
+            android:hint="식품 검색" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewFoodItems"
+    <!-- 스크롤 영역: 섹션별 RecyclerView 포함 -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:listitem="@layout/item_food" />
+        android:layout_marginTop="130dp"
+        android:layout_marginBottom="80dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- 마감 식품 섹션 -->
+            <TextView
+                android:text="소비기한 마감 식품"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:background="#FF6F61"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewExpired"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <!-- 임박 식품 섹션 -->
+            <TextView
+                android:text="소비기한 임박 식품"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:background="#81C784"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewExpiring"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <TextView
+                android:id="@+id/textViewEmptyMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="검색 결과가 없습니다"
+                android:textAlignment="center"
+                android:textColor="#888888"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/buttonViewAll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="전체 보기"
+                app:backgroundTint="#A8E6CF"
+                android:layout_marginTop="12dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- + 버튼 -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        android:layout_gravity="bottom|center_horizontal"
         android:layout_margin="16dp"
-        android:contentDescription="식품 추가"
-        app:srcCompat="@drawable/ic_add" />  </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:contentDescription="Add Food"
+        app:srcCompat="@drawable/ic_add"
+        app:backgroundTint="#A8E6CF"
+        app:tint="@android:color/white" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,104 +1,141 @@
 package com.example.freshbox.ui.list
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
+import android.view.MotionEvent
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.freshbox.databinding.ActivityMainBinding
-import com.example.freshbox.ui.addedit.AddEditFoodActivity // AddEditFoodActivity import 확인
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
+import com.example.freshbox.model.FoodItem
+import com.example.freshbox.ui.addedit.AddFoodBottomSheetFragment
+import com.example.freshbox.ui.all.AllFoodsActivity
+import org.json.JSONArray
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: FoodListViewModel by viewModels() // FoodListViewModel 사용
-    private lateinit var foodListAdapter: FoodListAdapter
+    private lateinit var expiredAdapter: FoodListAdapter
+    private lateinit var expiringAdapter: FoodListAdapter
+
+    private var allItems: List<FoodItem> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+        // RecyclerView 세팅
+        expiredAdapter = FoodListAdapter()
+        expiringAdapter = FoodListAdapter()
 
-        setupRecyclerView()
-        setupTabs()
+        binding.recyclerViewExpired.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewExpired.adapter = expiredAdapter
 
-        viewModel.filteredFoodItems.observe(this) { items ->
-            foodListAdapter.submitList(items ?: emptyList())
-        }
+        binding.recyclerViewExpiring.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewExpiring.adapter = expiringAdapter
 
+        // + 버튼 → 식품 추가 모달 띄우기
         binding.fabAddItem.setOnClickListener {
-            val intent = Intent(this, AddEditFoodActivity::class.java)
-            startActivity(intent)
+            AddFoodBottomSheetFragment().show(supportFragmentManager, "AddFood")
         }
 
-        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-            0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-        ) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean = false
+        // 🔍 전체 보기 버튼
+        binding.buttonViewAll.setOnClickListener {
+            startActivity(Intent(this, AllFoodsActivity::class.java))
+        }
 
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-                if (position != RecyclerView.NO_POSITION && position < foodListAdapter.currentList.size) {
-                    val foodItem = foodListAdapter.currentList[position]
-                    viewModel.deleteFoodItem(foodItem) // 또는 viewModel.onFoodItemSwiped(foodItem)
-                    Snackbar.make(binding.root, "${foodItem.name} 삭제됨", Snackbar.LENGTH_LONG)
-                        .setAction("실행 취소") {
-                            // viewModel.undoDelete() // 삭제 취소 기능 구현 시
-                        }.show()
-                }
+        // 검색 기능
+        binding.editTextSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updateFilteredList(s.toString())
             }
-        }
-        ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(binding.recyclerViewFoodItems)
-    }
-
-    private fun setupRecyclerView() {
-        foodListAdapter = FoodListAdapter { foodItem ->
-            val intent = Intent(this, AddEditFoodActivity::class.java)
-            intent.putExtra(AddEditFoodActivity.EXTRA_FOOD_ID, foodItem.id)
-            startActivity(intent)
-        }
-        binding.recyclerViewFoodItems.apply {
-            adapter = foodListAdapter
-            layoutManager = LinearLayoutManager(this@MainActivity)
-        }
-    }
-
-    private fun setupTabs() {
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                tab?.let {
-                    when (it.position) {
-                        0 -> viewModel.setFilter(FoodFilterType.ACTIVE)
-                        1 -> viewModel.setFilter(FoodFilterType.EXPIRING_SOON)
-                        2 -> viewModel.setFilter(FoodFilterType.EXPIRED)
-                        3 -> viewModel.setFilter(FoodFilterType.ALL)
-                    }
-                }
-            }
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
+            override fun afterTextChanged(s: Editable?) {}
         })
-        // 초기 탭 선택 및 필터 설정
-        // ACTIVE 탭 (0번 인덱스)을 기본으로 선택하여 리스너가 호출되도록 함
-        binding.tabLayout.getTabAt(0)?.select()
-        // 만약 select() 호출로 onTabSelected가 바로 호출되지 않는다면 (호출되는 것이 일반적임)
-        // 또는 ViewModel의 초기 필터 상태와 동기화하려면 아래처럼 명시적으로 호출할 수 있습니다.
-        // if (viewModel.filterType.value != FoodFilterType.ACTIVE) { // ViewModel에 현재 필터 상태 LiveData가 있다면
-        //    viewModel.setFilter(FoodFilterType.ACTIVE)
-        // }
-        // 혹은, 가장 간단하게는 ViewModel의 _filterType 기본값이 ACTIVE이므로,
-        // init 블록에서 updateFilteredData가 호출되어 초기 데이터가 로드됩니다.
-        // 따라서 아래 코드는 불필요할 수 있습니다.
-        // viewModel.setFilter(FoodFilterType.ACTIVE)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        allItems = loadFoodItemsFromJson(this)
+        updateFilteredList(binding.editTextSearch.text?.toString() ?: "")
+    }
+
+    private fun updateFilteredList(query: String) {
+        val lower = query.lowercase()
+
+        // 자정 기준
+        val today = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+
+        val expired = allItems.filter {
+            it.expiryDate.toMillis() < today &&
+                    (it.name.lowercase().contains(lower) || it.category.lowercase().contains(lower))
+        }
+
+        val expiring = allItems.filter {
+            val diff = it.expiryDate.toMillis() - today
+            diff in 0..(3 * 24 * 60 * 60 * 1000L) &&
+                    (it.name.lowercase().contains(lower) || it.category.lowercase().contains(lower))
+        }
+
+        expiredAdapter.submitList(expired)
+        expiringAdapter.submitList(expiring)
+
+        val isEmpty = expired.isEmpty() && expiring.isEmpty()
+        binding.textViewEmptyMessage.visibility = if (isEmpty) View.VISIBLE else View.GONE
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+            view.clearFocus()
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    private fun loadFoodItemsFromJson(context: Context): List<FoodItem> {
+        val file = File(context.filesDir, "FreshBox/items.json")
+        if (!file.exists()) return emptyList()
+
+        val json = JSONArray(file.readText())
+        return (0 until json.length()).map { i ->
+            val obj = json.getJSONObject(i)
+            FoodItem(
+                name = obj.getString("name"),
+                quantity = obj.getString("quantity"),
+                category = obj.getString("category"),
+                storageLocation = obj.getString("storageLocation"),
+                memo = obj.getString("memo"),
+                purchaseDate = obj.getString("purchaseDate"),
+                expiryDate = obj.getString("expiryDate"),
+                imagePath = obj.getString("imagePath")
+            )
+        }
+    }
+
+    private fun String.toMillis(): Long {
+        return try {
+            val millis = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(this)?.time ?: 0L
+            Log.d("toMillis()", "📅 입력값: \"$this\" → 변환된 millis: $millis")
+            millis
+        } catch (e: Exception) {
+            Log.e("toMillis()", "⚠️ 날짜 변환 실패: \"$this\"", e)
+            0L
+        }
     }
 }

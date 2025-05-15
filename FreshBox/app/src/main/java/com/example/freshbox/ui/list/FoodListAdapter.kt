@@ -1,77 +1,75 @@
 package com.example.freshbox.ui.list
 
-import android.graphics.Color
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.freshbox.data.FoodItem
-import com.example.freshbox.databinding.ItemFoodBinding
+import com.example.freshbox.R
+import com.example.freshbox.model.FoodItem
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
-class FoodListAdapter(private val onItemClicked: (FoodItem) -> Unit) :
-    ListAdapter<FoodItem, FoodListAdapter.FoodViewHolder>(FoodDiffCallback()) {
+class FoodListAdapter : RecyclerView.Adapter<FoodListAdapter.FoodViewHolder>() {
+
+    private var foodList: List<FoodItem> = emptyList()
+
+    fun submitList(newList: List<FoodItem>) {
+        foodList = newList
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
-        val binding = ItemFoodBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FoodViewHolder(binding)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_food, parent, false)
+        return FoodViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: FoodViewHolder, position: Int) {
-        val current = getItem(position)
-        holder.bind(current)
-        holder.itemView.setOnClickListener {
-            onItemClicked(current)
-        }
+        holder.bind(foodList[position])
     }
 
-    inner class FoodViewHolder(private val binding: ItemFoodBinding) : RecyclerView.ViewHolder(binding.root) {
-        private val dateFormat = SimpleDateFormat("yyyy.MM.dd (E)", Locale.getDefault())
+    override fun getItemCount(): Int = foodList.size
 
+    class FoodViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: FoodItem) {
-            binding.textViewItemName.text = item.name
-            binding.textViewItemExpiryDate.text = "소비기한: ${dateFormat.format(item.expiryDate)}"
-            binding.textViewItemQuantity.text = "수량: ${item.quantity}"
-            binding.textViewItemCategory.text = item.category ?: "카테고리 없음"
+            val nameView = itemView.findViewById<TextView>(R.id.textViewName)
+            val expiryView = itemView.findViewById<TextView>(R.id.textViewExpiry)
+            val ddayView = itemView.findViewById<TextView>(R.id.textViewDday)
+            val imageView = itemView.findViewById<ImageView>(R.id.imageViewFood)
 
-            // 남은 일수 계산 및 표시
-            val today = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+            nameView.text = item.name
+            expiryView.text = "소비기한: ${item.expiryDate}"
+
+            // D-day 계산
+            val today = System.currentTimeMillis()
+            val expiryMillis = item.expiryDate.toMillis()
+            val diffDays = ((expiryMillis - today) / (1000 * 60 * 60 * 24)).toInt()
+
+            ddayView.text = when {
+                diffDays > 0 -> "D-$diffDays"
+                diffDays == 0 -> "D-day"
+                else -> "D+${-diffDays}"
             }
-            val expiry = Calendar.getInstance().apply {
-                time = item.expiryDate
-                set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
-            }
 
-            val diffInMillis = expiry.timeInMillis - today.timeInMillis
-            val diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis)
-
-            when {
-                diffInDays < 0 -> {
-                    binding.textViewItemDaysRemaining.text = "${-diffInDays}일 지남"
-                    binding.textViewItemDaysRemaining.setTextColor(Color.parseColor("#D32F2F")) // 진한 빨강
-                }
-                diffInDays == 0L -> {
-                    binding.textViewItemDaysRemaining.text = "오늘까지!"
-                    binding.textViewItemDaysRemaining.setTextColor(Color.parseColor("#FBC02D")) // 주황/노랑
-                }
-                diffInDays <= 3L -> { // 3일 이하로 남았을 때
-                    binding.textViewItemDaysRemaining.text = "${diffInDays}일 남음"
-                    binding.textViewItemDaysRemaining.setTextColor(Color.parseColor("#FBC02D")) // 주황/노랑
-                }
-                else -> {
-                    binding.textViewItemDaysRemaining.text = "${diffInDays}일 남음"
-                    binding.textViewItemDaysRemaining.setTextColor(Color.parseColor("#388E3C")) // 초록
-                }
+            // 이미지 표시
+            val file = File(item.imagePath)
+            if (file.exists()) {
+                val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                imageView.setImageBitmap(bitmap)
+            } else {
+                imageView.setImageResource(R.drawable.ic_launcher_foreground)
             }
         }
-    }
 
-    class FoodDiffCallback : DiffUtil.ItemCallback<FoodItem>() {
-        override fun areItemsTheSame(oldItem: FoodItem, newItem: FoodItem): Boolean = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: FoodItem, newItem: FoodItem): Boolean = oldItem == newItem
+        private fun String.toMillis(): Long {
+            return try {
+                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(this)?.time ?: 0L
+            } catch (e: Exception) {
+                0L
+            }
+        }
     }
 }
