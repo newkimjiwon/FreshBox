@@ -13,7 +13,9 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FoodListAdapter : RecyclerView.Adapter<FoodListAdapter.FoodViewHolder>() {
+class FoodListAdapter(
+    private val onItemLongClick: ((FoodItem) -> Unit)? = null
+) : RecyclerView.Adapter<FoodListAdapter.FoodViewHolder>() {
 
     private var foodList: List<FoodItem> = emptyList()
 
@@ -28,20 +30,20 @@ class FoodListAdapter : RecyclerView.Adapter<FoodListAdapter.FoodViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: FoodViewHolder, position: Int) {
-        holder.bind(foodList[position])
+        val item = foodList[position]
+        holder.bind(item)
+        holder.itemView.setOnLongClickListener {
+            onItemLongClick?.invoke(item)
+            true
+        }
     }
 
     override fun getItemCount(): Int = foodList.size
 
     class FoodViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: FoodItem) {
-            val nameView = itemView.findViewById<TextView>(R.id.textViewName)
-            val expiryView = itemView.findViewById<TextView>(R.id.textViewExpiry)
             val ddayView = itemView.findViewById<TextView>(R.id.textViewDday)
             val imageView = itemView.findViewById<ImageView>(R.id.imageViewFood)
-
-            nameView.text = item.name
-            expiryView.text = "소비기한: ${item.expiryDate}"
 
             // D-day 계산
             val today = System.currentTimeMillis()
@@ -49,9 +51,18 @@ class FoodListAdapter : RecyclerView.Adapter<FoodListAdapter.FoodViewHolder>() {
             val diffDays = ((expiryMillis - today) / (1000 * 60 * 60 * 24)).toInt()
 
             ddayView.text = when {
-                diffDays > 0 -> "D-$diffDays"
-                diffDays == 0 -> "D-day"
-                else -> "D+${-diffDays}"
+                diffDays > 0 -> {
+                    ddayView.setBackgroundResource(R.drawable.bg_dday_soon)
+                    "D-$diffDays"
+                }
+                diffDays == 0 -> {
+                    ddayView.setBackgroundResource(R.drawable.bg_dday_soon)
+                    "D-day"
+                }
+                else -> {
+                    ddayView.setBackgroundResource(R.drawable.bg_dday_expired)
+                    "D+${-diffDays}"
+                }
             }
 
             // 이미지 표시

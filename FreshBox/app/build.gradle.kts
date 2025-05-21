@@ -31,6 +31,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -57,6 +58,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
 
+    // java.time (LocalDate, YearMonth 등 사용 가능하게)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+
     // Room (로컬 데이터베이스)
     implementation("androidx.room:room-runtime:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
@@ -71,4 +75,12 @@ dependencies {
 
     // WorkManager (백그라운드 알림)
     implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    // Kizitonwose CalendarView (캘린더 라이브러리)
+    implementation("com.kizitonwose.calendar:view:2.4.0")
+    implementation("com.kizitonwose.calendar:core:2.4.0")
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
