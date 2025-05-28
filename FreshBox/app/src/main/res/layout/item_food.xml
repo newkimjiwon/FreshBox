@@ -3,7 +3,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="#D0E7FF">
+    android:background="#D0E7FF"
+    android:layout_marginEnd="8dp">
 
     <FrameLayout
         android:layout_width="100dp"
