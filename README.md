@@ -55,9 +55,3 @@ com.example.freshbox  <br/>
 > - `screenshots/food_list.png`  
 > - `screenshots/add_food.png`  
 
-## 📄 라이선스
-이 프로젝트는 MIT 라이선스를 따릅니다. 자세한 내용은 `LICENSE` 파일을 참고해주세요.
-
----
-
-> **Made with ❤️ for efficient food management**
