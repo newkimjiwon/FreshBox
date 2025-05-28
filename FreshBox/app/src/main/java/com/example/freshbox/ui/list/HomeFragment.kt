@@ -3,14 +3,18 @@ package com.example.freshbox.ui.list
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.freshbox.R
 import com.example.freshbox.databinding.FragmentHomeBinding
 import com.example.freshbox.model.FoodItem
 import com.example.freshbox.ui.addedit.AddFoodBottomSheetFragment
@@ -35,8 +39,15 @@ class HomeFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        expiredAdapter = FoodListAdapter { foodItem -> showDeleteDialog(foodItem) }
-        expiringAdapter = FoodListAdapter { foodItem -> showDeleteDialog(foodItem) }
+        expiredAdapter = FoodListAdapter(
+            onItemClick = { foodItem -> showFoodDetailDialog(foodItem) },
+            onItemLongClick = { foodItem -> showDeleteDialog(foodItem) }
+        )
+
+        expiringAdapter = FoodListAdapter(
+            onItemClick = { foodItem -> showFoodDetailDialog(foodItem) },
+            onItemLongClick = { foodItem -> showDeleteDialog(foodItem) }
+        )
 
         binding.recyclerViewExpired.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -104,6 +115,50 @@ class HomeFragment : Fragment() {
             .setNegativeButton("취소", null)
             .show()
     }
+
+    // 메인화면에서 이미지 클릭시 상세 정보 출력
+    private fun showFoodDetailDialog(item: FoodItem) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_food_detail, null)
+
+        val imageView = dialogView.findViewById<ImageView>(R.id.imageViewFood)
+        val imageFile = File(item.imagePath)
+        if (imageFile.exists()) {
+            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+            imageView.setImageBitmap(bitmap)
+        } else {
+            imageView.setImageResource(R.drawable.ic_launcher_foreground)
+        }
+
+        dialogView.findViewById<TextView>(R.id.textFoodName).text = "식품명: ${item.name}"
+        dialogView.findViewById<TextView>(R.id.textExpiryDate).text = "소비기한: ${item.expiryDate}"
+        dialogView.findViewById<TextView>(R.id.textQuantity).text = "수량: ${item.quantity}"
+        dialogView.findViewById<TextView>(R.id.textCategory).text = "카테고리: ${item.category}"
+        dialogView.findViewById<TextView>(R.id.textStorage).text = "보관 위치: ${item.storageLocation}"
+        dialogView.findViewById<TextView>(R.id.textPurchaseDate).text = "구매일: ${item.purchaseDate}"
+        dialogView.findViewById<TextView>(R.id.textMemo).text = "메모: ${item.memo}"
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("식품 상세정보")
+            .setView(dialogView)
+            .setPositiveButton("닫기", null)
+            .setNeutralButton("수정") { _, _ ->
+                // AddFoodBottomSheetFragment로 항목 전달
+                val fragment = AddFoodBottomSheetFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("mode", "edit")
+                        putSerializable("item", item)  // FoodItem은 Serializable이어야 함
+                    }
+                }
+                fragment.show(parentFragmentManager, "EditFood")
+            }
+            .setNegativeButton("삭제") { _, _ ->
+                showDeleteDialog(item)
+            }
+            .create()
+
+        dialog.show()
+    }
+
 
     private fun deleteFoodItem(item: FoodItem) {
         allItems = allItems.filter { it != item }

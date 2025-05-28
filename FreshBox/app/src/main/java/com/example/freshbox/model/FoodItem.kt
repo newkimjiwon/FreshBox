@@ -1,5 +1,7 @@
 package com.example.freshbox.model
 
+import java.io.Serializable
+
 data class FoodItem(
     val name: String,
     val quantity: String,
@@ -9,4 +11,4 @@ data class FoodItem(
     val purchaseDate: String,
     val expiryDate: String,
     val imagePath: String
-)
+) : Serializable

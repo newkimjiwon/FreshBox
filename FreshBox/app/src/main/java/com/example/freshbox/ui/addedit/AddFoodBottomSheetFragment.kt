@@ -3,6 +3,7 @@ package com.example.freshbox.ui.addedit
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
@@ -27,6 +28,7 @@ class AddFoodBottomSheetFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     private var currentPhotoPath: String? = null
+    private var originalItem: FoodItem? = null  // ✅ 수정 모드용 변수
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +42,25 @@ class AddFoodBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupCategoryDropdown()
         setupListeners()
+
+        // 수정모드일 경우 기존 값 채우기
+        originalItem = arguments?.getSerializable("item") as? FoodItem
+        originalItem?.let { item ->
+            binding.editTextName.setText(item.name)
+            binding.editTextQuantity.setText(item.quantity)
+            binding.autoCompleteCategory.setText(item.category)
+            binding.editTextStorage.setText(item.storageLocation)
+            binding.editTextMemo.setText(item.memo)
+            binding.editTextPurchaseDate.setText(item.purchaseDate)
+            binding.editTextExpiryDate.setText(item.expiryDate)
+
+            val file = File(item.imagePath)
+            if (file.exists()) {
+                val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                binding.imageViewFood.setImageBitmap(bitmap)
+                currentPhotoPath = item.imagePath
+            }
+        }
     }
 
     private fun setupCategoryDropdown() {
@@ -119,18 +140,44 @@ class AddFoodBottomSheetFragment : BottomSheetDialogFragment() {
         if (!dir.exists()) dir.mkdir()
         val file = File(dir, "items.json")
         val list = if (file.exists()) JSONArray(file.readText()) else JSONArray()
-        val obj = JSONObject().apply {
-            put("name", item.name)
-            put("quantity", item.quantity)
-            put("category", item.category)
-            put("storageLocation", item.storageLocation)
-            put("memo", item.memo)
-            put("purchaseDate", item.purchaseDate)
-            put("expiryDate", item.expiryDate)
-            put("imagePath", item.imagePath)
+        val updatedList = JSONArray()
+
+        for (i in 0 until list.length()) {
+            val obj = list.getJSONObject(i)
+            if (originalItem != null &&
+                obj.getString("name") == originalItem!!.name &&
+                obj.getString("expiryDate") == originalItem!!.expiryDate) {
+                // 기존 항목 수정
+                updatedList.put(JSONObject().apply {
+                    put("name", item.name)
+                    put("quantity", item.quantity)
+                    put("category", item.category)
+                    put("storageLocation", item.storageLocation)
+                    put("memo", item.memo)
+                    put("purchaseDate", item.purchaseDate)
+                    put("expiryDate", item.expiryDate)
+                    put("imagePath", item.imagePath)
+                })
+            } else {
+                updatedList.put(obj)
+            }
         }
-        list.put(obj)
-        file.writeText(list.toString())
+
+        if (originalItem == null) {
+            // 새 항목 추가
+            updatedList.put(JSONObject().apply {
+                put("name", item.name)
+                put("quantity", item.quantity)
+                put("category", item.category)
+                put("storageLocation", item.storageLocation)
+                put("memo", item.memo)
+                put("purchaseDate", item.purchaseDate)
+                put("expiryDate", item.expiryDate)
+                put("imagePath", item.imagePath)
+            })
+        }
+
+        file.writeText(updatedList.toString())
     }
 
     override fun onDestroyView() {

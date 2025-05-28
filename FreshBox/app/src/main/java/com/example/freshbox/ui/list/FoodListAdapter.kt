@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class FoodListAdapter(
+    private val onItemClick: ((FoodItem) -> Unit)? = null,
     private val onItemLongClick: ((FoodItem) -> Unit)? = null
 ) : RecyclerView.Adapter<FoodListAdapter.FoodViewHolder>() {
 
@@ -32,6 +33,12 @@ class FoodListAdapter(
     override fun onBindViewHolder(holder: FoodViewHolder, position: Int) {
         val item = foodList[position]
         holder.bind(item)
+
+        // 클릭 이벤트 처리 추가
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(item)
+        }
+
         holder.itemView.setOnLongClickListener {
             onItemLongClick?.invoke(item)
             true
