@@ -1,3 +1,4 @@
+// File: app/src/main/java/com/example/freshbox/data/FoodDao.kt
 package com.example.freshbox.data
 
 import androidx.lifecycle.LiveData
@@ -29,6 +30,23 @@ interface FoodDao {
     @Query("SELECT * FROM food_items WHERE expiryDate < :todayTimestamp ORDER BY expiryDate DESC")
     fun getExpiredFoodItems(todayTimestamp: Long): LiveData<List<FoodItem>>
 
-    @Query("SELECT * FROM food_items WHERE barcode = :barcode LIMIT 1")
-    suspend fun getFoodItemByBarcode(barcode: String): FoodItem?
+    // --- 사용자 정의 카테고리 및 태그 관련 쿼리 ---
+    // (이전에 추가했던 내용들이 있다면 여기에 포함되어야 합니다)
+
+    // 특정 카테고리 ID에 해당하는 식품 목록 가져오기
+    @Query("SELECT * FROM food_items WHERE categoryId = :categoryId ORDER BY expiryDate ASC")
+    fun getFoodItemsByCategoryId(categoryId: Long): LiveData<List<FoodItem>>
+
+    // 특정 태그를 포함하는 식품 목록 가져오기
+    @Query("SELECT * FROM food_items WHERE tags LIKE '%' || :tag || '%' ORDER BY expiryDate ASC")
+    fun getFoodItemsWithTag(tag: String): LiveData<List<FoodItem>>
+
+    // 카테고리가 지정되지 않은 식품만 가져오는 쿼리
+    @Query("SELECT * FROM food_items WHERE categoryId IS NULL ORDER BY expiryDate ASC")
+    fun getUncategorizedFoodItems(): LiveData<List<FoodItem>>
+
+    // --- CalendarFragment를 위한 새 쿼리 추가 ---
+    // 특정 날짜 범위에 만료되는 식품 목록 가져오기
+    @Query("SELECT * FROM food_items WHERE expiryDate >= :startTimestamp AND expiryDate <= :endTimestamp ORDER BY expiryDate ASC")
+    suspend fun getFoodItemsExpiringBetween(startTimestamp: Long, endTimestamp: Long): List<FoodItem>
 }

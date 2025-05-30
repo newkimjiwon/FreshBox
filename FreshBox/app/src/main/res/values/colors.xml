@@ -8,4 +8,13 @@
     <color name="purple_200">#BB86FC</color>
     <color name="purple_500">#6200EE</color>
     <color name="purple_700">#3700B3</color>
+    <color name="default_text_color">#FF000000</color>
+    <color name="disabled_text_color">#FFCCCCCC</color>
+    <color name="my_light_primary">#66BB6A</color>
+    <color name="my_light_primary_variant">#388E3C</color>
+    <color name="my_light_on_primary">#FFFFFF</color>
+    <color name="my_light_secondary">#4FC3F7</color>
+    <color name="my_light_secondary_variant">#03A9F4</color>
+    <color name="my_light_on_secondary">#000000</color>
+    <color name="my_status_bar_color">@color/my_light_primary_variant</color>
 </resources>

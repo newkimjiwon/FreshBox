@@ -1,51 +1,93 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white"
-    android:padding="16dp">
+    tools:context=".ui.calendar.CalendarFragment">
 
-    <!-- 월/년도 + 좌우 버튼 -->
-    <LinearLayout
-        android:id="@+id/headerContainer"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textViewMonthYear"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="8dp">
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        tools:text="2025년 5월" />
 
-        <ImageButton
-            android:id="@+id/buttonPrevMonth"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_chevron_left"
-            android:contentDescription="Previous Month"/>
+    <ImageButton
+        android:id="@+id/buttonPrevMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_chevron_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textViewMonthYear"
+        app:layout_constraintBottom_toBottomOf="@id/textViewMonthYear"
+        android:layout_marginStart="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="이전 달" />
 
-        <TextView
-            android:id="@+id/textViewMonthYear"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:textColor="#000000"
-            android:text="June 2021"/>
-
-        <ImageButton
-            android:id="@+id/buttonNextMonth"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_chevron_right"
-            android:contentDescription="Next Month"/>
-    </LinearLayout>
+    <ImageButton
+        android:id="@+id/buttonNextMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_chevron_right"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textViewMonthYear"
+        app:layout_constraintBottom_toBottomOf="@id/textViewMonthYear"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="다음 달" />
 
     <com.kizitonwose.calendar.view.CalendarView
         android:id="@+id/calendarView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" app:layout_constraintTop_toBottomOf="@id/textViewMonthYear"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        app:cv_dayViewResource="@layout/item_calendar_day"
+        app:cv_monthHeaderResource="@layout/item_calendar_header"
+        app:cv_orientation="horizontal"
+        app:cv_scrollPaged="true" />
+
+    <View
+    android:id="@+id/dividerCalendar"
+    android:layout_width="0dp"
+    android:layout_height="1dp"
+    android:background="?android:attr/listDivider"
+    app:layout_constraintTop_toBottomOf="@id/calendarView"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    android:layout_marginTop="8dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewCalendarItems"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/dividerCalendar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_food" />
+
+    <TextView
+        android:id="@+id/textViewCalendarNoItems"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:cv_dayViewResource="@layout/item_calendar_day" />
-</LinearLayout>
+        android:text="선택된 날짜에 해당하는 식품이 없습니다."
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/dividerCalendar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
