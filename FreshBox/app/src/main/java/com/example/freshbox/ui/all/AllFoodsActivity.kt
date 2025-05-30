@@ -1,97 +1,94 @@
+// File: app/src/main/java/com/example/freshbox/ui/all/AllFoodsActivity.kt
 package com.example.freshbox.ui.all
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels // by viewModels() 사용을 위해 (Activity용)
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer // LiveData 관찰을 위해
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.freshbox.data.FoodItem // data.FoodItem (Room Entity) 사용
 import com.example.freshbox.databinding.ActivityAllFoodsBinding
-import com.example.freshbox.model.FoodItem
 import com.example.freshbox.ui.list.FoodListAdapter
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.File
+import com.example.freshbox.ui.list.FoodListViewModel
+import com.example.freshbox.ui.list.FoodFilterType // FoodFilterType enum import
 
 class AllFoodsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAllFoodsBinding
     private lateinit var adapter: FoodListAdapter
-    private var foodItems: MutableList<FoodItem> = mutableListOf()
+
+    private val viewModel: FoodListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAllFoodsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        adapter = FoodListAdapter()
+        adapter = FoodListAdapter(
+            onItemClick = { foodItem ->
+                // TODO: 상세 보기 또는 수정 화면으로 이동 로직
+                Toast.makeText(this, "Clicked: ${foodItem.name}", Toast.LENGTH_SHORT).show()
+            },
+            onItemLongClick = { foodItem ->
+                // TODO: 삭제 확인 다이얼로그 표시 로직
+                Toast.makeText(this, "Long Clicked: ${foodItem.name}", Toast.LENGTH_SHORT).show()
+            }
+        )
         binding.recyclerViewAllFoods.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewAllFoods.adapter = adapter
 
-        loadItems()
+        observeViewModel()
         setupSwipeToDelete()
+
+        // Activity가 처음 생성될 때 모든 아이템을 보도록 필터 타입 설정
+        viewModel.setFilterTypeForAllActivity(FoodFilterType.ALL) // <<< 모든 아이템을 보도록 필터 설정
+        // 필요하다면 카테고리 필터나 태그 검색어도 초기화
+        viewModel.setCategoryFilter(null)
+        viewModel.setSearchKeyword(null)
+
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        title = "모든 식품 목록"
     }
 
-    private fun loadItems() {
-        foodItems = loadFoodItemsFromJson(this).toMutableList()
-        adapter.submitList(foodItems.toList())
-        binding.textViewEmpty.visibility = if (foodItems.isEmpty()) View.VISIBLE else View.GONE
+    private fun observeViewModel() {
+        // FoodListViewModel의 filteredFoodItems LiveData를 관찰
+        viewModel.filteredFoodItemsForAllActivity.observe(this, Observer { items: List<com.example.freshbox.data.FoodItem>? -> // <<< LiveData 이름 변경
+            adapter.submitList(items ?: emptyList())
+            binding.textViewEmpty.visibility = if (items.isNullOrEmpty()) View.VISIBLE else View.GONE
+        })
     }
 
     private fun setupSwipeToDelete() {
-        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean = false
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val removedItem = foodItems.removeAt(position)
-                adapter.submitList(foodItems.toList())
-                saveAllToJson(foodItems, this@AllFoodsActivity)
-                Toast.makeText(this@AllFoodsActivity, "삭제됨: ${removedItem.name}", Toast.LENGTH_SHORT).show()
-                binding.textViewEmpty.visibility = if (foodItems.isEmpty()) View.VISIBLE else View.GONE
+                val itemToDelete = adapter.currentList.getOrNull(position)
+
+                itemToDelete?.let {
+                    viewModel.deleteFoodItem(it)
+                    Toast.makeText(this@AllFoodsActivity, "삭제됨: ${it.name}", Toast.LENGTH_SHORT).show()
+                }
             }
         })
         itemTouchHelper.attachToRecyclerView(binding.recyclerViewAllFoods)
     }
 
-    private fun loadFoodItemsFromJson(context: Context): List<FoodItem> {
-        val file = File(context.filesDir, "FreshBox/items.json")
-        if (!file.exists()) return emptyList()
-
-        val json = JSONArray(file.readText())
-        return (0 until json.length()).map { i ->
-            val obj = json.getJSONObject(i)
-            FoodItem(
-                name = obj.getString("name"),
-                quantity = obj.getString("quantity"),
-                category = obj.getString("category"),
-                storageLocation = obj.getString("storageLocation"),
-                memo = obj.getString("memo"),
-                purchaseDate = obj.getString("purchaseDate"),
-                expiryDate = obj.getString("expiryDate"),
-                imagePath = obj.getString("imagePath")
-            )
-        }
-    }
-
-    private fun saveAllToJson(list: List<FoodItem>, context: Context) {
-        val file = File(context.filesDir, "FreshBox/items.json")
-        val json = JSONArray()
-        list.forEach { item ->
-            val obj = JSONObject().apply {
-                put("name", item.name)
-                put("quantity", item.quantity)
-                put("category", item.category)
-                put("storageLocation", item.storageLocation)
-                put("memo", item.memo)
-                put("purchaseDate", item.purchaseDate)
-                put("expiryDate", item.expiryDate)
-                put("imagePath", item.imagePath)
-            }
-            json.put(obj)
-        }
-        file.writeText(json.toString())
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

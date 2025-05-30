@@ -58,6 +58,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
 
+    // Fragment KTX (이것을 추가!)
+    implementation("androidx.fragment:fragment-ktx:1.7.1") // 또는 최신 안정 버전
+
     // java.time (LocalDate, YearMonth 등 사용 가능하게)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 

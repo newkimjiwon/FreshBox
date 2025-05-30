@@ -1,9 +1,20 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.FreshBox" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+        <item name="colorPrimary">@color/my_light_primary</item>
+        <item name="colorPrimaryVariant">@color/my_light_primary_variant</item>
+        <item name="colorOnPrimary">@color/my_light_on_primary</item>
+        <item name="colorSecondary">@color/my_light_secondary</item>
+        <item name="colorSecondaryVariant">@color/my_light_secondary_variant</item>
+        <item name="colorOnSecondary">@color/my_light_on_secondary</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item> </style>
 
     <style name="Theme.FreshBox" parent="Base.Theme.FreshBox" />
+
+    <style name="CalendarDayHeader">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?attr/colorOnSurface</item> </style>
 </resources>
