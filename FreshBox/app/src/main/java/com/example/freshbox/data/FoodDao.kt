@@ -49,4 +49,8 @@ interface FoodDao {
     // 특정 날짜 범위에 만료되는 식품 목록 가져오기
     @Query("SELECT * FROM food_items WHERE expiryDate >= :startTimestamp AND expiryDate <= :endTimestamp ORDER BY expiryDate ASC")
     suspend fun getFoodItemsExpiringBetween(startTimestamp: Long, endTimestamp: Long): List<FoodItem>
+
+    // 오늘 유통기한이 만료되는 식품 목록 가져오기 (WorkManager용, suspend 함수)
+    @Query("SELECT * FROM food_items WHERE expiryDate >= :startOfDayMillis AND expiryDate <= :endOfDayMillis")
+    suspend fun getItemsExpiringToday(startOfDayMillis: Long, endOfDayMillis: Long): List<FoodItem>
 }

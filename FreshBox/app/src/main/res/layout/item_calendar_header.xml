@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingVertical="10dp">
+    android:paddingVertical="10dp"
 
-    <TextView style="@style/CalendarDayHeader" tools:text="월" />
+    android:background="?attr/colorSurfaceVariant"> <TextView style="@style/CalendarDayHeader" tools:text="월" />
     <TextView style="@style/CalendarDayHeader" tools:text="화" />
     <TextView style="@style/CalendarDayHeader" tools:text="수" />
     <TextView style="@style/CalendarDayHeader" tools:text="목" />

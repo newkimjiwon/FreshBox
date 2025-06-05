@@ -1,0 +1,8 @@
+<resources>
+    <color name="calendar_text_today">#FF000000</color>
+    <color name="calendar_text_event_priority">#FFFFFFFF</color>
+    <color name="calendar_text_event">#FFFFFFFF</color>
+    <color name="calendar_text_purchase">#FFFFFFFF</color>
+    <color name="calendar_text_default">#FFFFFFFF</color>
+    <color name="calendar_text_disabled">#80FFFFFF</color>
+</resources>

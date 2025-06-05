@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.freshbox.data.FoodItem // data.FoodItem (Room Entity) 사용
 import com.example.freshbox.databinding.ActivityAllFoodsBinding
+import com.example.freshbox.ui.addedit.AddFoodBottomSheetFragment // AddFoodBottomSheetFragment import 추가
 import com.example.freshbox.ui.list.FoodListAdapter
 import com.example.freshbox.ui.list.FoodListViewModel
 import com.example.freshbox.ui.list.FoodFilterType // FoodFilterType enum import
@@ -30,12 +31,15 @@ class AllFoodsActivity : AppCompatActivity() {
 
         adapter = FoodListAdapter(
             onItemClick = { foodItem ->
-                // TODO: 상세 보기 또는 수정 화면으로 이동 로직
-                Toast.makeText(this, "Clicked: ${foodItem.name}", Toast.LENGTH_SHORT).show()
+                // 클릭된 FoodItem의 ID를 사용하여 AddFoodBottomSheetFragment를 수정 모드로 실행
+                // AddFoodBottomSheetFragment의 companion object에 TAG_EDIT 및 newInstance(id)가 정의되어 있어야 함
+                val editFragment = AddFoodBottomSheetFragment.newInstance(foodItem.id)
+                editFragment.show(supportFragmentManager, AddFoodBottomSheetFragment.TAG_EDIT)
             },
             onItemLongClick = { foodItem ->
-                // TODO: 삭제 확인 다이얼로그 표시 로직
-                Toast.makeText(this, "Long Clicked: ${foodItem.name}", Toast.LENGTH_SHORT).show()
+                // TODO: 삭제 확인 다이얼로그 표시 로직 (HomeFragment의 showDeleteConfirmationDialog 참고하여 구현 가능)
+                // 예시: showDeleteConfirmationDialogInAllFoods(foodItem)
+                Toast.makeText(this, "길게 클릭: ${foodItem.name} (삭제 기능 구현 필요)", Toast.LENGTH_SHORT).show()
             }
         )
         binding.recyclerViewAllFoods.layoutManager = LinearLayoutManager(this)
@@ -44,20 +48,16 @@ class AllFoodsActivity : AppCompatActivity() {
         observeViewModel()
         setupSwipeToDelete()
 
-        // Activity가 처음 생성될 때 모든 아이템을 보도록 필터 타입 설정
-        viewModel.setFilterTypeForAllActivity(FoodFilterType.ALL) // <<< 모든 아이템을 보도록 필터 설정
-        // 필요하다면 카테고리 필터나 태그 검색어도 초기화
+        viewModel.setFilterTypeForAllActivity(FoodFilterType.ALL)
         viewModel.setCategoryFilter(null)
         viewModel.setSearchKeyword(null)
-
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "모든 식품 목록"
     }
 
     private fun observeViewModel() {
-        // FoodListViewModel의 filteredFoodItems LiveData를 관찰
-        viewModel.filteredFoodItemsForAllActivity.observe(this, Observer { items: List<com.example.freshbox.data.FoodItem>? -> // <<< LiveData 이름 변경
+        viewModel.filteredFoodItemsForAllActivity.observe(this, Observer { items: List<FoodItem>? ->
             adapter.submitList(items ?: emptyList())
             binding.textViewEmpty.visibility = if (items.isNullOrEmpty()) View.VISIBLE else View.GONE
         })
@@ -76,11 +76,10 @@ class AllFoodsActivity : AppCompatActivity() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val itemToDelete = adapter.currentList.getOrNull(position)
-
-                itemToDelete?.let {
-                    viewModel.deleteFoodItem(it)
-                    Toast.makeText(this@AllFoodsActivity, "삭제됨: ${it.name}", Toast.LENGTH_SHORT).show()
+                if (position != RecyclerView.NO_POSITION) { // 유효한 포지션인지 확인
+                    val itemToDelete = adapter.currentList[position]
+                    viewModel.deleteFoodItem(itemToDelete)
+                    Toast.makeText(this@AllFoodsActivity, "삭제됨: ${itemToDelete.name}", Toast.LENGTH_SHORT).show()
                 }
             }
         })
@@ -88,7 +87,21 @@ class AllFoodsActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        onBackPressedDispatcher.onBackPressed()
+        onBackPressedDispatcher.onBackPressed() // 기본 뒤로가기 동작 실행
         return true
     }
+
+    // (선택 사항) 삭제 확인 다이얼로그 함수
+    /*
+    private fun showDeleteConfirmationDialogInAllFoods(item: FoodItem) {
+        AlertDialog.Builder(this)
+            .setTitle("삭제 확인")
+            .setMessage("'${item.name}' 항목을 삭제하시겠습니까?")
+            .setPositiveButton("삭제") { _, _ ->
+                viewModel.deleteFoodItem(item)
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+    */
 }

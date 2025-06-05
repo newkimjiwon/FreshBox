@@ -206,16 +206,17 @@ class CalendarFragment : Fragment() {
     }
 
     inner class DayViewContainer(view: View, private val onDateClick: (CalendarDay) -> Unit) : ViewContainer(view) {
-        // view는 item_calendar_day.xml의 루트 레이아웃입니다.
+        // item_calendar_day.xml의 ID를 정확히 사용해야 합니다.
+        // 이 ID들이 item_calendar_day.xml에 정의되어 있다고 가정합니다.
         val dayText: TextView = view.findViewById(R.id.calendarDayText)
-        val dayItemIndicator: View? = view.findViewById(R.id.dayItemIndicator)
+        val dayItemIndicator: View? = view.findViewById(R.id.dayItemIndicator) // null일 수 있으므로 View?로 선언
+
         private var currentDayInternal: CalendarDay? = null
 
         init {
-            // itemView.setOnClickListener를 view.setOnClickListener로 변경
             view.setOnClickListener {
                 currentDayInternal?.let {
-                    if (it.position == DayPosition.MonthDate) {
+                    if (it.position == DayPosition.MonthDate) { // 현재 달의 날짜만 클릭 이벤트 전달
                         onDateClick(it)
                     }
                 }
@@ -226,49 +227,61 @@ class CalendarFragment : Fragment() {
             currentDayInternal = day
             dayText.text = day.date.dayOfMonth.toString()
 
+            // 1. 스타일 초기화: 배경은 투명하게, 텍스트 색상은 item_calendar_day.xml에 정의된 기본값(?attr/colorOnSurface)을 따르도록 함
             dayText.background = null
-            // itemView.context 대신 view.context 사용
-            dayText.setTextColor(ContextCompat.getColor(view.context, R.color.default_text_color))
-            dayItemIndicator?.isVisible = false
-            // itemView.isClickable 대신 view.isClickable 사용
-            view.isClickable = false
+            // dayText.setTextColor(ContextCompat.getColor(view.context, R.color.calendar_day_text_default)) // XML에서 ?attr/colorOnSurface로 설정했다면 이 줄은 필요 없을 수 있음
+            // 만약 XML에서 기본 textColor를 ?attr/colorOnSurface로 했다면, 아래 else에서 기본으로 돌아갈 때도 해당 색상을 사용해야 함.
+            // colors.xml에 <color name="calendar_day_text_default_themed">?attr/colorOnSurface</color> 와 같이 정의하고 사용할 수도 있음.
+            // 여기서는 XML의 textColor를 우선으로 하고, 특정 상태일 때만 변경한다고 가정.
 
-            if (day.position == DayPosition.MonthDate) {
-                // itemView.isClickable 대신 view.isClickable 사용
+            dayItemIndicator?.isVisible = false // 인디케이터 기본 숨김
+            view.isClickable = false // 기본적으로 클릭 불가능
+
+            if (day.position == DayPosition.MonthDate) { // 현재 달의 날짜만 스타일 및 클릭 이벤트 적용
                 view.isClickable = true
+
                 val showPurchaseIndicator = purchaseDates.contains(day.date)
                 val showExpiryIndicator = expiryDates.contains(day.date)
+                var specificDayTextColor: Int? = null // 특정 상태일 때 텍스트 색상 변경용
 
                 when {
                     day.date == today -> {
-                        dayText.setBackgroundResource(R.drawable.bg_calendar_day_today)
-                        // itemView.context 대신 view.context 사용
-                        dayText.setTextColor(ContextCompat.getColor(view.context, R.color.white))
+                        dayText.setBackgroundResource(R.drawable.bg_calendar_day_today) // 오늘 날짜 배경
+                        // values/colors.xml과 values-night/colors.xml에 각각 정의된 색상 사용
+                        specificDayTextColor = ContextCompat.getColor(view.context, R.color.calendar_text_today)
                         dayItemIndicator?.isVisible = showPurchaseIndicator || showExpiryIndicator
                     }
-                    showExpiryIndicator && showPurchaseIndicator -> {
-                        dayText.setBackgroundResource(R.drawable.bg_calendar_day_expiry_purchase)
-                        // itemView.context 대신 view.context 사용
-                        dayText.setTextColor(ContextCompat.getColor(view.context, R.color.white))
+                    showExpiryIndicator && showPurchaseIndicator -> { // 소비기한이면서 구매일
+                        dayText.setBackgroundResource(R.drawable.bg_calendar_day_expiry_purchase) // 소비+구매일 배경
+                        specificDayTextColor = ContextCompat.getColor(view.context, R.color.calendar_text_event_priority) // 예: 흰색 또는 밝은 강조색
                         dayItemIndicator?.isVisible = true
                     }
-                    showExpiryIndicator -> {
-                        dayText.setBackgroundResource(R.drawable.bg_calendar_day_expiry)
-                        // itemView.context 대신 view.context 사용
-                        dayText.setTextColor(ContextCompat.getColor(view.context, R.color.white))
+                    showExpiryIndicator -> { // 소비기한일
+                        dayText.setBackgroundResource(R.drawable.bg_calendar_day_expiry) // 소비기한 배경
+                        specificDayTextColor = ContextCompat.getColor(view.context, R.color.calendar_text_event)
                         dayItemIndicator?.isVisible = true
                     }
-                    showPurchaseIndicator -> {
-                        dayText.setBackgroundResource(R.drawable.bg_calendar_day_purchase)
-                        // itemView.context 대신 view.context 사용
-                        dayText.setTextColor(ContextCompat.getColor(view.context, R.color.black))
+                    showPurchaseIndicator -> { // 구매일
+                        dayText.setBackgroundResource(R.drawable.bg_calendar_day_purchase) // 구매일 배경
+                        specificDayTextColor = ContextCompat.getColor(view.context, R.color.calendar_text_purchase) // 예: 어두운 배경엔 밝게, 밝은 배경엔 어둡게
                         dayItemIndicator?.isVisible = true
                     }
-                    else -> { /* 기본 스타일 유지 */ }
+                    else -> {
+                        // 특정 상태가 아닌 일반적인 현재 달의 날짜
+                        // 배경 없음, 텍스트 색상은 item_calendar_day.xml에 정의된 기본값(?attr/colorOnSurface) 사용
+                        // dayText.setTextColor(ContextCompat.getColor(view.context, R.color.calendar_text_default)) // 명시적으로 다시 설정할 수도 있음
+                        dayItemIndicator?.isVisible = showPurchaseIndicator || showExpiryIndicator // 인디케이터는 상태에 따라 표시
+                    }
                 }
-            } else {
-                // itemView.context 대신 view.context 사용
-                dayText.setTextColor(ContextCompat.getColor(view.context, R.color.disabled_text_color))
+
+                // 특정 상태에 따른 텍스트 색상이 지정되었다면 적용
+                specificDayTextColor?.let { dayText.setTextColor(it) }
+                // 특정 상태에 따른 텍스트 색상이 지정되지 않았다면 (else 블록),
+                // item_calendar_day.xml의 TextView에 android:textColor="?attr/colorOnSurface" 가 설정되어 그 값을 따름.
+                // 만약 그것도 없다면, 위에서 초기화 시 사용했던 R.color.calendar_text_default를 따름.
+
+            } else { // 이전/다음 달의 날짜 (흐리게 처리)
+                dayText.setTextColor(ContextCompat.getColor(view.context, R.color.calendar_text_disabled))
             }
         }
     }

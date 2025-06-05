@@ -2,4 +2,9 @@
     <string name="app_name">FreshBox</string>
     <string name="title_add_edit_food">식품 정보</string>
     <string name="add_food_item">식품 추가</string>
+
+    <string name="theme_dialog_title">테마 선택</string>
+    <string name="theme_light">라이트 모드</string>
+    <string name="theme_dark">다크 모드</string>
+    <string name="theme_system_default">시스템 설정 따름</string>
 </resources>
