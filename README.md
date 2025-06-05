@@ -62,20 +62,20 @@
 
 ## 🗂️ 프로젝트 구조
 
-com.example.freshbox/
-├── data/ # Entity, DAO, DB, TypeConverters
-├── databinding/ # ViewBinding (자동 생성)
-├── model/ # (이전 JSON 방식 - 현재는 미사용)
-├── repository/ # FoodRepository
-├── ui/ # UI 관련 Activity, Fragment, Adapter 등
-│ ├── addedit/ # AddFoodBottomSheetFragment 등
-│ ├── all/ # AllFoodsActivity
-│ ├── calendar/ # CalendarFragment
-│ ├── list/ # HomeFragment, ViewModel, Adapter
-│ └── splash/ # SplashActivity
-├── util/ # 공통 유틸 (ThemeHelper, NotificationHelper 등)
-├── worker/ # ExpiryCheckWorker (WorkManager)
-└── MyApplication.kt # 앱 초기화, 테마/알림 채널 등록 등
+com.example.freshbox/ <br/>
+├── data/ # Entity, DAO, DB, TypeConverters <br/>
+├── databinding/ # ViewBinding (자동 생성) <br/>
+├── model/ # (이전 JSON 방식 - 현재는 미사용) <br/>
+├── repository/ # FoodRepository <br/>
+├── ui/ # UI 관련 Activity, Fragment, Adapter 등 <br/>
+│ ├── addedit/ # AddFoodBottomSheetFragment 등 <br/>
+│ ├── all/ # AllFoodsActivity <br/> 
+│ ├── calendar/ # CalendarFragment <br/>
+│ ├── list/ # HomeFragment, ViewModel, Adapter <br/>
+│ └── splash/ # SplashActivity <br/>
+├── util/ # 공통 유틸 (ThemeHelper, NotificationHelper 등) <br/>
+├── worker/ # ExpiryCheckWorker (WorkManager) <br/> 
+└── MyApplication.kt # 앱 초기화, 테마/알림 채널 등록 등 <br/>
 
 ---
 
