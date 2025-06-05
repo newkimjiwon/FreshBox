@@ -61,6 +61,7 @@
 ---
 
 ## 🗂️ 프로젝트 구조
+
 com.example.freshbox/
 ├── data/ # Entity, DAO, DB, TypeConverters
 ├── databinding/ # ViewBinding (자동 생성)
