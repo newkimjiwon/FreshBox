@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.calendar.CalendarFragment">
+    android:background="?android:attr/colorBackground" tools:context=".ui.calendar.CalendarFragment">
 
     <TextView
         android:id="@+id/textViewMonthYear"
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="?attr/colorOnBackground" app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_chevron_left"
-        app:layout_constraintStart_toStartOf="parent"
+        app:tint="?attr/colorOnBackground" app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/textViewMonthYear"
         app:layout_constraintBottom_toBottomOf="@id/textViewMonthYear"
         android:layout_marginStart="16dp"
@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_chevron_right"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="?attr/colorOnBackground" app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/textViewMonthYear"
         app:layout_constraintBottom_toBottomOf="@id/textViewMonthYear"
         android:layout_marginEnd="16dp"
@@ -45,7 +45,8 @@
     <com.kizitonwose.calendar.view.CalendarView
         android:id="@+id/calendarView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content" app:layout_constraintTop_toBottomOf="@id/textViewMonthYear"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/textViewMonthYear"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp"
@@ -53,16 +54,14 @@
         app:cv_monthHeaderResource="@layout/item_calendar_header"
         app:cv_orientation="horizontal"
         app:cv_scrollPaged="true" />
-
     <View
-    android:id="@+id/dividerCalendar"
-    android:layout_width="0dp"
-    android:layout_height="1dp"
-    android:background="?android:attr/listDivider"
-    app:layout_constraintTop_toBottomOf="@id/calendarView"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    android:layout_marginTop="8dp"/>
+        android:id="@+id/dividerCalendar"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" app:layout_constraintTop_toBottomOf="@id/calendarView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCalendarItems"
@@ -84,7 +83,7 @@
         android:layout_height="wrap_content"
         android:text="선택된 날짜에 해당하는 식품이 없습니다."
         android:visibility="gone"
-        tools:visibility="visible"
+        android:textColor="?attr/colorOnBackground" tools:visibility="visible"
         app:layout_constraintTop_toBottomOf="@id/dividerCalendar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:padding="16dp"
+    android:background="?attr/colorSurface" android:padding="16dp"
     tools:context=".ui.addedit.AddFoodBottomSheetFragment">
 
     <LinearLayout
@@ -19,30 +18,27 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_launcher_foreground"
-            android:scaleType="centerCrop"
-            android:layout_marginBottom="16dp"/>
-
-        <Button
-            android:id="@+id/buttonTakePhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="사진 촬영/선택"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_marginBottom="16dp"/>
+            android:src="@drawable/ic_launcher_foreground" android:scaleType="centerCrop"
+            android:layout_marginBottom="16dp"
+            android:background="?attr/colorSurfaceVariant" /> <Button
+        android:id="@+id/buttonTakePhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="사진 촬영/선택"
+        style="?attr/materialButtonOutlinedStyle"
+        android:textColor="?attr/colorPrimary" app:strokeColor="?attr/colorPrimary" app:iconTint="?attr/colorPrimary" android:layout_marginBottom="16dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textFieldName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="식품명 (필수)"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapWords"/>
+            style="?attr/textInputStyle"> <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -58,7 +54,7 @@
                 android:hint="구매일"
                 app:endIconMode="custom"
                 app:endIconDrawable="@android:drawable/ic_menu_today"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                app:endIconTint="?attr/colorOnSurface" style="?attr/textInputStyle">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextPurchaseDate"
                     android:layout_width="match_parent"
@@ -77,7 +73,7 @@
                 android:hint="소비기한 (필수)"
                 app:endIconMode="custom"
                 app:endIconDrawable="@android:drawable/ic_menu_today"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                app:endIconTint="?attr/colorOnSurface" style="?attr/textInputStyle">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextExpiryDate"
                     android:layout_width="match_parent"
@@ -92,7 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="수량 (예: 1개, 2팩)"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="?attr/textInputStyle"
             android:layout_marginTop="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTextQuantity"
@@ -114,12 +110,11 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:hint="카테고리 선택"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-                <AutoCompleteTextView
-                    android:id="@+id/autoCompleteCategory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"/>
+                style="?attr/textInputStyle" app:endIconMode="dropdown_menu"> <AutoCompleteTextView
+                android:id="@+id/autoCompleteCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageButton
@@ -127,8 +122,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_add"
-                app:tint="?attr/colorPrimary"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="?attr/colorPrimary" android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="새 카테고리 추가"
                 android:layout_marginStart="8dp"/>
         </LinearLayout>
@@ -137,8 +131,8 @@
             android:id="@+id/textFieldTags"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="태그 (쉼표로 구분하여 여러 개 입력)"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:hint="태그 (쉼표로 구분)"
+            style="?attr/textInputStyle"
             android:layout_marginTop="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTextTags"
@@ -146,12 +140,13 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"/>
         </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textFieldStorage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="보관 위치"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="?attr/textInputStyle"
             android:layout_marginTop="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTextStorage"
@@ -165,14 +160,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="냉동 보관"
-            android:layout_marginTop="8dp"/>
+            android:textColor="?attr/colorOnSurface" app:buttonTint="?attr/colorPrimary" android:layout_marginTop="8dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textFieldMemo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="메모"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="?attr/textInputStyle"
             android:layout_marginTop="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTextMemo"
@@ -188,6 +183,5 @@
             android:layout_height="wrap_content"
             android:text="저장"
             android:layout_marginTop="24dp"/>
-
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

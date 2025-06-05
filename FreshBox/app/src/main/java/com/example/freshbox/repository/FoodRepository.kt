@@ -91,4 +91,9 @@ class FoodRepository(private val foodDao: FoodDao, private val categoryDao: Cate
     fun getUncategorizedFoodItems(): LiveData<List<FoodItem>> {
         return foodDao.getUncategorizedFoodItems()
     }
+
+    // 오늘 유통기한이 만료되는 식품 목록 가져오기
+    suspend fun getItemsExpiringToday(startOfDayMillis: Long, endOfDayMillis: Long): List<FoodItem> {
+        return foodDao.getItemsExpiringToday(startOfDayMillis, endOfDayMillis)
+    }
 }

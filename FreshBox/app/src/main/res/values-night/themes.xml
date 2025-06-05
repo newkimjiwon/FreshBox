@@ -1,7 +1,32 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.FreshBox" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Base.Theme.FreshBox" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/my_dark_primary</item>
+        <item name="colorPrimaryVariant">@color/my_dark_primary_variant</item>
+        <item name="colorOnPrimary">@color/my_dark_on_primary</item>
+
+        <item name="colorSecondary">@color/my_dark_secondary</item>
+        <item name="colorSecondaryVariant">@color/my_dark_secondary_variant</item> <item name="colorOnSecondary">@color/my_dark_on_secondary</item>
+
+        <item name="android:colorBackground">@color/my_dark_background</item>
+        <item name="colorSurface">@color/my_dark_surface</item>
+        <item name="colorOnBackground">@color/my_dark_on_background</item>
+        <item name="colorOnSurface">@color/my_dark_on_surface</item>
+        <item name="colorError">@color/my_dark_error</item>
+        <item name="colorOnError">@color/my_dark_on_error</item>
+
+        <item name="android:statusBarColor">@color/my_dark_app_bar_background</item> <item name="android:textColorPrimary">?attr/colorOnSurface</item> <item name="android:textColorSecondary">@color/my_dark_text_secondary</item> <item name="android:textColorHint">@color/my_dark_hint_text</item> <item name="textInputStyle">@style/Widget.App.TextInputLayout.Dark</item>
+        <item name="toolbarStyle">@style/Widget.App.Toolbar.Dark</item>
     </style>
+
+    <style name="Theme.FreshBox" parent="Base.Theme.FreshBox" />
+
+    <style name="Widget.App.TextInputLayout.Dark" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/text_input_layout_stroke_color_dark</item> <item name="hintTextColor">@color/my_dark_hint_text</item> <item name="android:textColor">?attr/colorOnSurface</item> </style>
+
+    <style name="Widget.App.Toolbar.Dark" parent="Widget.Material3.Toolbar.Surface">
+        <item name="android:background">@color/my_dark_app_bar_background</item>
+        <item name="titleTextColor">?attr/colorOnSurface</item>
+        <item name="navigationIconTint">?attr/colorOnSurface</item>
+        <item name="android:tint">?attr/colorOnSurface</item> </style>
+
 </resources>

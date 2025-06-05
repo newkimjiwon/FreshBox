@@ -17,4 +17,27 @@
     <color name="my_light_secondary_variant">#03A9F4</color>
     <color name="my_light_on_secondary">#000000</color>
     <color name="my_status_bar_color">@color/my_light_primary_variant</color>
+    <color name="text_input_layout_stroke_color_light">#8A000000</color>
+    <color name="my_dark_primary_variant">#5E35B1</color>
+    <color name="my_dark_primary">#7E57C2</color>
+    <color name="my_dark_on_primary">#FFFFFFFF</color>
+    <color name="my_dark_secondary">#81D4FA</color>
+    <color name="my_dark_secondary_variant">#4FC3F7</color>
+    <color name="my_dark_on_secondary">#FF000000</color>
+    <color name="my_dark_background">#FF121212</color>
+    <color name="my_dark_surface">#FF1E1E1E</color>
+    <color name="my_dark_on_background">#FFFFFFFF</color>
+    <color name="my_dark_on_surface">#FFFFFFFF</color>
+    <color name="my_dark_error">#CF6679</color>
+    <color name="my_dark_on_error">#000000</color>
+    <color name="text_input_layout_stroke_color_dark">#A7A7A7</color>
+    <color name="my_dark_app_bar_background">#FF1A1A1A</color>
+    <color name="my_dark_text_secondary">#B3FFFFFF</color>
+    <color name="my_dark_hint_text">#80FFFFFF</color>
+    <color name="calendar_text_today">#FFFFFFFF</color>
+    <color name="calendar_text_event_priority">#FFFFFFFF</color>
+    <color name="calendar_text_event">#FFFFFFFF</color>
+    <color name="calendar_text_purchase">#FF000000</color>
+    <color name="calendar_text_default">#FF000000</color>
+    <color name="calendar_text_disabled">#FFCCCCCC</color>
 </resources>
