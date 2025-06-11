@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground" tools:context=".ui.list.HomeFragment">
+    android:background="?android:attr/colorBackground"
+    tools:context=".ui.list.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topBar"
@@ -26,6 +27,20 @@
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <ImageView
+            android:id="@+id/imageViewManageCategories"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_manage_categories"
+            android:contentDescription="카테고리 관리"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            app:tint="?attr/colorOnSurface"
+            app:layout_constraintEnd_toStartOf="@id/imageViewSettings"
+            app:layout_constraintTop_toTopOf="@id/imageViewSettings"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewSettings"
+            android:layout_marginEnd="16dp" />
+        <ImageView
             android:id="@+id/imageViewSettings"
             android:layout_width="24dp"
             android:layout_height="24dp"
@@ -46,14 +61,15 @@
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textFieldCategoryFilter"> <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/editTextSearch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="식품 검색 (이름, 태그 등)"
-        android:inputType="text"
-        android:maxLines="1"
-        android:imeOptions="actionSearch"/>
+        app:layout_constraintEnd_toStartOf="@+id/textFieldCategoryFilter">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="식품 검색 (이름, 태그 등)"
+            android:inputType="text"
+            android:maxLines="1"
+            android:imeOptions="actionSearch"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
