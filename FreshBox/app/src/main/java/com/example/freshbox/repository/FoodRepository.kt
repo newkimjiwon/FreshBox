@@ -143,10 +143,16 @@ class FoodRepository(private val foodDao: FoodDao, private val categoryDao: Cate
         return categoryDao.getCategoryByName(name)
     }
 
+    suspend fun deleteCategoryAndUncategorizeItems(category: Category) {
+        // 1. 해당 카테고리 ID를 사용하는 모든 FoodItem의 categoryId를 NULL로 설정합니다.
+        foodDao.clearCategoryIdForItems(category.id)
+        // 2. FoodItem들의 업데이트가 완료된 후, Category를 삭제합니다.
+        categoryDao.deleteCategory(category)
+    }
+
     /**
      * 특정 ID를 가진 Category를 LiveData 형태로 가져옵니다.
      * @param id 조회할 Category의 ID.
-     * @return 해당 ID의 Category를 담은 LiveData (없으면 null 포함 LiveData).
      */
     fun getCategoryById(id: Long): LiveData<Category?> {
         return categoryDao.getCategoryById(id)

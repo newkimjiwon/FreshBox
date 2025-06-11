@@ -88,4 +88,12 @@ interface FoodDao {
     // @param endOfDayMillis 오늘 날짜의 종료 시간 타임스탬프.
     @Query("SELECT * FROM food_items WHERE expiryDate >= :startOfDayMillis AND expiryDate <= :endOfDayMillis")
     suspend fun getItemsExpiringToday(startOfDayMillis: Long, endOfDayMillis: Long): List<FoodItem>
+
+    /**
+     * 특정 카테고리 ID를 가진 모든 식품들의 categoryId를 NULL로 업데이트합니다.
+     * 카테고리가 삭제될 때, 해당 카테고리에 속했던 아이템들을 '미지정' 상태로 만들기 위해 사용됩니다.
+     * @param categoryIdToClear NULL로 변경할 대상 카테고리의 ID.
+     */
+    @Query("UPDATE food_items SET categoryId = NULL WHERE categoryId = :categoryIdToClear")
+    suspend fun clearCategoryIdForItems(categoryIdToClear: Long)
 }
