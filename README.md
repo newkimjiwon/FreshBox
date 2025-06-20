@@ -83,7 +83,7 @@ com.example.freshbox/ <br/>
 
 - **Android Studio 버전**: `2023.2.1 Patch 1 (Iguana)` 또는 이후 버전 추천
 - SDK & Gradle 도구 설치 확인 후 **Sync Now**
-- **에뮬레이터 또는 실제 기기(API 26+)**에서 실행
+- 에뮬레이터 또는 실제 기기(API 26+)에서 실행
 - Android 13(API 33+) 이상에서는 알림 권한 허용 필요
 
 ---
@@ -99,15 +99,3 @@ com.example.freshbox/ <br/>
 - 유효성 검사 강화, 오류 처리 보완
 - 단위 테스트, UI 테스트 추가
 - 바코드 스캔 (ML Kit), OCR, 클라우드 동기화 등 고도화 계획
-
----
-
-## 📸 스크린샷
-
-| 메인 화면 (라이트) | 메인 화면 (다크) |
-|------------------|------------------|
-| ![Home Light](screenshots/main_home_light.png) | ![Home Dark](screenshots/main_home_dark.png) |
-
-| 캘린더 화면 | 식품 추가 |
-|------------------|------------------|
-| ![Calendar](screenshots/calendar_view.png) | ![Add/Edit](screenshots/add_edit_food.png) |
