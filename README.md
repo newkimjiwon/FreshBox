@@ -1,11 +1,10 @@
-# 🧊 FreshBox
+# FreshBox
 
 **FreshBox**는 냉장고 및 보관함 속 식품을 체계적으로 관리할 수 있는 Android 애플리케이션입니다.  
 식품의 **구매일**, **소비기한** 등을 기록하여 **효율적인 식품 소비**를 도와줍니다.
 
----
 
-## 📱 주요 기능
+## 주요 기능
 
 ### 식품 등록/수정/삭제
 - 이름, 수량, 소비기한, 구매일, 카테고리, 보관 위치, 메모, 이미지, 냉동 여부, 태그 입력 가능
@@ -39,18 +38,16 @@
 - 매일 정해진 시간에 유통기한이 **오늘 만료되는 식품**을 알림으로 안내
 - 알림 클릭 시 앱 실행
 
----
-
-## 🧩 사용 기술 스택
+## 사용 기술 스택
 
 | 기술 | 설명 |
 |------|------|
 | **Kotlin** | Android 앱 개발 주언어 |
 | **Android Jetpack** | MVVM, Room, ViewModel, LiveData, WorkManager 등 |
-| └ MVVM Architecture | UI와 로직 분리 |
-| └ Room | SQLite 기반 ORM, 식품/카테고리 저장 |
-| └ ViewModel / LiveData | 수명주기 고려한 상태 관리 |
-| └ WorkManager | 신뢰성 높은 백그라운드 작업 수행 (알림 등) |
+| MVVM Architecture | UI와 로직 분리 |
+| Room | SQLite 기반 ORM, 식품/카테고리 저장 |
+| ViewModel / LiveData | 수명주기 고려한 상태 관리 |
+| WorkManager | 신뢰성 높은 백그라운드 작업 수행 (알림 등) |
 | **Coroutines** | 비동기 처리 |
 | **Material Components** | UI 구성 (BottomSheet, TextInputLayout 등) |
 | **ViewBinding** | View 접근 안전성 확보 |
@@ -58,9 +55,8 @@
 | **Kizitonwose CalendarView** | 커스터마이징 가능한 달력 라이브러리 |
 | **SharedPreferences** | 사용자 설정 (테마 등) 저장 |
 
----
 
-## 🗂️ 프로젝트 구조
+## 프로젝트 구조
 
 com.example.freshbox/ <br/>
 ├── data/ # Entity, DAO, DB, TypeConverters <br/>
@@ -77,18 +73,15 @@ com.example.freshbox/ <br/>
 ├── worker/ # ExpiryCheckWorker (WorkManager) <br/> 
 └── MyApplication.kt # 앱 초기화, 테마/알림 채널 등록 등 <br/>
 
----
 
-## ⚙️ 빌드 및 실행 방법
+## 빌드 및 실행 방법
 
 - **Android Studio 버전**: `2023.2.1 Patch 1 (Iguana)` 또는 이후 버전 추천
 - SDK & Gradle 도구 설치 확인 후 **Sync Now**
 - 에뮬레이터 또는 실제 기기(API 26+)에서 실행
 - Android 13(API 33+) 이상에서는 알림 권한 허용 필요
 
----
-
-## 🧪 향후 개선 방향
+## 향후 개선 방향
 
 - `CalendarFragment`: 클릭 시 하단 식품 리스트 표시 + 수정/삭제 기능 (일부 구현됨)
 - 목록 및 상세정보에서 **태그/카테고리 이름** 더 명확하게 표시
